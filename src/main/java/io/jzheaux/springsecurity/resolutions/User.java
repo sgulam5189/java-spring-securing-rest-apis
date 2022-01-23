@@ -17,6 +17,13 @@ public class User implements Serializable {
         this.username = username;
         this.password = password;
     }
+    public  User(User user){
+        this.id = user.id;
+        this.username = user.username;
+        this.password = user.password;
+        this.enabled = user.enabled;
+        this.userAuthorities = user.userAuthorities;
+    }
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Collection<UserAuthority> userAuthorities = new ArrayList<>();
