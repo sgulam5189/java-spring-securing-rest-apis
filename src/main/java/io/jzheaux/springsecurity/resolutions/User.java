@@ -1,49 +1,48 @@
 package io.jzheaux.springsecurity.resolutions;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 
-@Entity(name = "users")
+@Entity(name="users")
 public class User implements Serializable {
+    @Id
+    UUID id;
 
-    User(){}
+    @Column(name="username")
+    String username;
 
-    public User(String username, String password) {
+    @Column
+    String password;
+
+    @Column
+    boolean enabled = true;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    Collection<UserAuthority> userAuthorities = new ArrayList<>();
+
+    User() {}
+
+    User(String username, String password) {
         this.id = UUID.randomUUID();
         this.username = username;
         this.password = password;
     }
-    public  User(User user){
+
+    User(User user) {
         this.id = user.id;
         this.username = user.username;
         this.password = user.password;
         this.enabled = user.enabled;
         this.userAuthorities = user.userAuthorities;
     }
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    Collection<UserAuthority> userAuthorities = new ArrayList<>();
-
-    public Collection<UserAuthority> getUserAuthorities(){
-        return Collections.unmodifiableCollection(this.userAuthorities);
-    }
-    public void grantAuthority(String authority){
-        UserAuthority userAuthority = new UserAuthority(authority, this);
-        this.userAuthorities.add(userAuthority);
-    }
-
-    @Id
-    UUID id;
-
-    @Column
-    String username;
-
-    @Column
-    String password;
 
     public UUID getId() {
         return id;
@@ -77,8 +76,11 @@ public class User implements Serializable {
         this.enabled = enabled;
     }
 
-    @Column
-    boolean enabled = true;
+    public Collection<UserAuthority> getUserAuthorities() {
+        return userAuthorities;
+    }
 
-
+    public void grantAuthority(String authority) {
+        this.userAuthorities.add(new UserAuthority(this, authority));
+    }
 }
