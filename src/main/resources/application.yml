@@ -3,3 +3,9 @@ spring:
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issue-uri: http://locahost:9999/auth/realms/one
